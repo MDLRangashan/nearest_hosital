@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Nearby Hospitals Finder
 
 A Flutter application to help users find hospitals in their vicinity.
@@ -67,3 +68,6 @@ A Flutter application to help users find hospitals in their vicinity.
 ## Note about API Keys
 
 The app uses Google Places API to fetch real hospital data. You must obtain your own API key and set up billing in Google Cloud Console. The free tier of the Places API allows 200 API calls per day, which should be sufficient for testing purposes.
+=======
+# nearest_hosital
+>>>>>>> 8a3ff7d9d4af6d78dff10083a2cad432557117dc

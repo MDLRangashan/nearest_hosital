@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/hospital/hospital_bloc_exports.dart';
+import '../blocs/gym/gym_bloc_exports.dart';
 import '../constants/app_constants.dart';
-import '../widgets/hospital_card.dart';
-import 'hospital_detail_screen.dart';
+import '../widgets/gym_card.dart';
+import 'gym_detail_screen.dart';
 import 'map_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class GymScreen extends StatefulWidget {
+  const GymScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<GymScreen> createState() => _GymScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _GymScreenState extends State<GymScreen> {
   String _searchQuery = '';
   String _selectedFilter = '';
   bool _isSortingByDistance = true;
@@ -21,13 +21,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<GymBloc>().add(FetchGyms());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appName),
+        title: const Text('Nearby Gyms'),
         actions: [
           IconButton(
             icon: const Icon(Icons.map),
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(AppConstants.defaultPadding),
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Search for hospitals...',
+                hintText: 'Search for gyms...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(
@@ -59,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   _searchQuery = value;
                 });
-                context.read<HospitalBloc>().add(SearchHospitals(value));
+                context.read<GymBloc>().add(SearchGyms(value));
               },
             ),
           ),
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     decoration: InputDecoration(
-                      labelText: 'Filter by Service',
+                      labelText: 'Filter by Facility',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
                           AppConstants.buttonRadius,
@@ -88,12 +89,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     items: [
                       const DropdownMenuItem(
                         value: '',
-                        child: Text('All Services'),
+                        child: Text('All Facilities'),
                       ),
-                      ...AppConstants.availableServices.map(
-                        (service) => DropdownMenuItem(
-                          value: service,
-                          child: Text(service),
+                      ...AppConstants.availableFacilities.map(
+                        (facility) => DropdownMenuItem(
+                          value: facility,
+                          child: Text(facility),
                         ),
                       ),
                     ],
@@ -101,8 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {
                         _selectedFilter = value ?? '';
                       });
-                      context.read<HospitalBloc>().add(
-                        FilterHospitalsByService(value ?? ''),
+                      context.read<GymBloc>().add(
+                        FilterGymsByFacility(value ?? ''),
                       );
                     },
                   ),
@@ -110,17 +111,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(width: 8),
 
-                BlocBuilder<HospitalBloc, HospitalState>(
+                BlocBuilder<GymBloc, GymState>(
                   buildWhen: (previous, current) {
-                    if (previous is HospitalLoaded &&
-                        current is HospitalLoaded) {
+                    if (previous is GymLoaded && current is GymLoaded) {
                       return previous.sortByDistance != current.sortByDistance;
                     }
                     return false;
                   },
                   builder: (context, state) {
                     bool isSortByDistance = true;
-                    if (state is HospitalLoaded) {
+                    if (state is GymLoaded) {
                       isSortByDistance = state.sortByDistance;
                     }
 
@@ -129,13 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: Text(isSortByDistance ? 'Distance' : 'Rating'),
                       onPressed: () {
                         if (isSortByDistance) {
-                          context.read<HospitalBloc>().add(
-                            SortHospitalsByRating(),
-                          );
+                          context.read<GymBloc>().add(SortGymsByRating());
                         } else {
-                          context.read<HospitalBloc>().add(
-                            SortHospitalsByDistance(),
-                          );
+                          context.read<GymBloc>().add(SortGymsByDistance());
                         }
                         setState(() {
                           _isSortingByDistance = !_isSortingByDistance;
@@ -154,11 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 8),
 
           Expanded(
-            child: BlocBuilder<HospitalBloc, HospitalState>(
+            child: BlocBuilder<GymBloc, GymState>(
               builder: (context, state) {
-                if (state is HospitalLoading) {
+                if (state is GymLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (state is HospitalError) {
+                } else if (state is GymError) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -177,34 +173,32 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
-                            context.read<HospitalBloc>().add(FetchHospitals());
+                            context.read<GymBloc>().add(FetchGyms());
                           },
                           child: const Text('Retry'),
                         ),
                       ],
                     ),
                   );
-                } else if (state is HospitalLoaded) {
-                  final hospitals = state.filteredHospitals;
+                } else if (state is GymLoaded) {
+                  final gyms = state.filteredGyms;
 
-                  if (hospitals.isEmpty) {
-                    return const Center(child: Text('No hospitals found'));
+                  if (gyms.isEmpty) {
+                    return const Center(child: Text('No gyms found'));
                   }
 
                   return ListView.builder(
-                    itemCount: hospitals.length,
+                    itemCount: gyms.length,
                     padding: const EdgeInsets.only(bottom: 16),
                     itemBuilder: (context, index) {
-                      final hospital = hospitals[index];
-                      return HospitalCard(
-                        hospital: hospital,
+                      final gym = gyms[index];
+                      return GymCard(
+                        gym: gym,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      HospitalDetailScreen(hospital: hospital),
+                              builder: (context) => GymDetailScreen(gym: gym),
                             ),
                           );
                         },

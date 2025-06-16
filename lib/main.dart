@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/hospital/hospital_bloc_exports.dart';
-import 'screens/home_screen.dart';
+import 'blocs/gym/gym_bloc_exports.dart';
+import 'screens/main_home_screen.dart';
 import 'services/hospital_service.dart';
+import 'services/gym_service.dart';
 import 'themes/app_theme.dart';
 import 'constants/app_constants.dart';
 
@@ -18,17 +20,17 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<HospitalBloc>(
-          create:
-              (context) =>
-                  HospitalBloc(hospitalService: HospitalService())
-                    ..add(FetchHospitals()),
+          create: (context) => HospitalBloc(hospitalService: HospitalService()),
+        ),
+        BlocProvider<GymBloc>(
+          create: (context) => GymBloc(gymService: GymService()),
         ),
       ],
       child: MaterialApp(
         title: AppConstants.appName,
         theme: AppTheme.lightTheme,
         debugShowCheckedModeBanner: false,
-        home: const HomeScreen(),
+        home: const MainHomeScreen(),
       ),
     );
   }
