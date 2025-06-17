@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nearby_hospital/screens/gym_screen.dart';
+import 'package:nearby_hospital/screens/jogging_track_screen.dart';
 import '../constants/app_constants.dart';
 import 'hospital_screen.dart';
 
@@ -74,9 +75,10 @@ class MainHomeScreen extends StatelessWidget {
                     Colors.purple,
                     Colors.purple[100]!,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Jogging Tracks feature coming soon!'),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JoggingTrackScreen(),
                         ),
                       );
                     },

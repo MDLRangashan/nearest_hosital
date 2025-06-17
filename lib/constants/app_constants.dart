@@ -1,6 +1,6 @@
 class AppConstants {
   // App info
-  static const String appName = 'Find Nearby Places';
+  static const String appName = 'Nearby Places';
 
   // Map
   static const double defaultZoom = 14.0;
@@ -9,7 +9,7 @@ class AppConstants {
 
   // UI
   static const double defaultPadding = 16.0;
-  static const double cardRadius = 16.0;
+  static const double cardRadius = 12.0;
   static const double buttonRadius = 8.0;
 
   // Filter
@@ -46,4 +46,9 @@ class AppConstants {
     'Orthopedics',
     'Ophthalmology',
   ];
+
+  static const String googlePlacesApiBaseUrl =
+      'https://maps.googleapis.com/maps/api/place';
+  static const String googlePlacesApiKey =
+      'AIzaSyAiOszXrtE3sBzxbrb7l2xRjmGqsi_6RzQ'; // Replace with your actual API key
 }

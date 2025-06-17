@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/hospital/hospital_bloc_exports.dart';
 import 'blocs/gym/gym_bloc_exports.dart';
+import 'blocs/jogging_track/jogging_track_bloc_exports.dart';
 import 'screens/main_home_screen.dart';
 import 'services/hospital_service.dart';
 import 'services/gym_service.dart';
+import 'services/jogging_track_service.dart';
 import 'themes/app_theme.dart';
 import 'constants/app_constants.dart';
 
@@ -24,6 +26,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<GymBloc>(
           create: (context) => GymBloc(gymService: GymService()),
+        ),
+        BlocProvider<JoggingTrackBloc>(
+          create:
+              (context) =>
+                  JoggingTrackBloc(joggingTrackService: JoggingTrackService()),
         ),
       ],
       child: MaterialApp(
